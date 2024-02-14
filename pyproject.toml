@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "customer-support-api"
+version = "0.1.0"
+description = "REST API for handle client's requests"
+authors = ["Oleksandr Klymenko <olexandr.klymenko@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "0.109.2"
+pydantic = "2.6.1"
+uvicorn = {extras = ["standard"], version = "^0.27.1"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.27"}
+aiosqlite = "^0.19.0"
+pydantic-settings = "^2.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
