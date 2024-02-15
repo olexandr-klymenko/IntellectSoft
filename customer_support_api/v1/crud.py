@@ -1,34 +1,31 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
-from customer_support_api.models import Client
-from customer_support_api.v1.schemas import ClientCreate, ClientUpdate
+from customer_support_api.models import Customer
+from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
 
 
-def create_client(session: Session, client_in: ClientCreate) -> Client:
-    client = Client(**client_in.model_dump())
-    session.add(client)
+def create_customer(session: Session, customer_in: CustomerCreate) -> Customer:
+    customer = Customer(**customer_in.model_dump())
+    session.add(customer)
     session.commit()
-    # session.refresh(client)
-    return client
+    return customer
 
 
-def get_client(session: Session, client_id: int) -> Optional[Client]:
-    return session.get(Client, client_id)
+def get_customer(session: Session, customer_id: int) -> Customer | None:
+    return session.get(Customer, customer_id)
 
 
-def update_client(
+def update_customer(
     session: Session,
-    client: Client,
-    client_update: ClientUpdate,
-) -> Client:
-    for name, value in client_update.model_dump(exclude_unset=True).items():
-        setattr(client, name, value)
+    customer: Customer,
+    customer_update: CustomerUpdate,
+) -> Customer:
+    for name, value in customer_update.model_dump(exclude_unset=True).items():
+        setattr(customer, name, value)
     session.commit()
-    return client
+    return customer
 
 
-def delete_client(session: Session, client: Client) -> None:
-    session.delete(client)
+def delete_customer(session: Session, customer: Customer) -> None:
+    session.delete(customer)
     session.commit()

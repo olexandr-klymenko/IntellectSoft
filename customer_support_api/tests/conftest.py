@@ -1,11 +1,11 @@
 import pytest
 
 from customer_support_api.db_helper import DatabaseHelper
-from customer_support_api.models import Base, Client
+from customer_support_api.models import Base, Customer
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
 
-TEST_CLIENT = {
+TEST_CUSTOMER = {
     "first_name": "John",
     "last_name": "Smith",
     "phone": "1231231",
@@ -22,8 +22,9 @@ def session():
 
 
 @pytest.fixture
-def client(session):
-    client = Client(**TEST_CLIENT)
-    session.add(client)
+def customer(session):
+    """Fixture for test customer"""
+    customer = Customer(**TEST_CUSTOMER)
+    session.add(customer)
     session.commit()
-    yield client
+    yield customer

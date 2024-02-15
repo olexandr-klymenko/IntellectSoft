@@ -20,14 +20,14 @@ class Base(DeclarativeBase):
     id = Column(Integer, primary_key=True)
 
 
-class Client(Base):
+class Customer(Base):
     first_name = Column(String(length=50))
     last_name = Column(String(length=50))
     phone = Column(String(length=50))
 
 
 class Request(Base):
-    created_by = Column(Integer, ForeignKey("client.id"))
+    created_by = Column(Integer, ForeignKey("customer.id"))
     body = Column(String(length=256), nullable=False)
     status = Column(Enum(StateEnum))
     processed_by = Column(Integer, ForeignKey("operator.id"))
