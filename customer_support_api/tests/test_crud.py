@@ -7,6 +7,7 @@ from customer_support_api.v1.crud import (
     create_customer,
     delete_customer,
     get_customer,
+    get_customers,
     update_customer,
 )
 from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
@@ -57,3 +58,43 @@ def test_delete_customer(session, customer):
     delete_customer(session=session, customer=customer)
     db_customer = session.get(Customer, customer.id)
     assert db_customer is None
+
+
+def test_get_all_customers(session, customers):
+    res_customers = get_customers(session)
+    assert len(res_customers) == len(session.query(Customer).all())
+
+
+def test_get_customers_by_first_name(session, customers):
+    res_customers = get_customers(session, first_name="Alice")
+    assert (
+        res_customers[0]
+        == session.query(Customer)
+        .filter(Customer.first_name == "Alice")
+        .first()
+    )
+
+
+def test_get_customers_by_last_name(session, customers):
+    res_customers = get_customers(session, last_name="Jones")
+    assert (
+        res_customers[0]
+        == session.query(Customer)
+        .filter(Customer.phone == "+442083661175")
+        .first()
+    )
+
+
+def test_get_customers_by_phone(session, customers):
+    res_customers = get_customers(session, phone="+442083661173")
+    assert (
+        res_customers[0]
+        == session.query(Customer)
+        .filter(Customer.first_name == "Charlie")
+        .first()
+    )
+
+
+def test_get_customers_invalid_field(session, customers):
+    res_customers = get_customers(session, email="test@example.com")
+    assert res_customers == []

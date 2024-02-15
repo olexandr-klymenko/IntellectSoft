@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import DeclarativeBase, declared_attr
+from sqlalchemy.orm import DeclarativeBase, declared_attr, relationship
 
 
 class StateEnum(enum.Enum):
@@ -21,9 +21,11 @@ class Base(DeclarativeBase):
 
 
 class Customer(Base):
-    first_name = Column(String(length=50))
-    last_name = Column(String(length=50))
-    phone = Column(String(length=50))
+    first_name = Column(String(length=50), index=True)
+    last_name = Column(String(length=50), index=True)
+    phone = Column(String(length=13), unique=True)
+
+    requests = relationship("Request", backref="customer", lazy=True)
 
 
 class Request(Base):
@@ -31,8 +33,11 @@ class Request(Base):
     body = Column(String(length=256), nullable=False)
     status = Column(Enum(StateEnum))
     processed_by = Column(Integer, ForeignKey("operator.id"))
+    resolution_comment = Column(String(length=256))
 
 
 class Operator(Base):
     first_name = Column(String(length=50))
     last_name = Column(String(length=50))
+
+    requests = relationship("Request", backref="operator", lazy=True)

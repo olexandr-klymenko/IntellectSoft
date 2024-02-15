@@ -1,3 +1,5 @@
+from typing import List, Type
+
 from fastapi import HTTPException, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
@@ -37,3 +39,17 @@ def update_customer(
 def delete_customer(session: Session, customer: Customer) -> None:
     session.delete(customer)
     session.commit()
+
+
+def get_customers(session: Session, **kwargs) -> List[Type[Customer]]:
+    customers_query = session.query(Customer)
+    for key, value in kwargs.items():
+        try:
+            customers_query = customers_query.filter(
+                getattr(Customer, key) == value
+            )
+        except AttributeError:
+            print(f"Unknown field '{key}'")
+            return []
+
+    return customers_query.all()

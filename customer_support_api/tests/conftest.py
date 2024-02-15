@@ -11,6 +11,35 @@ TEST_CUSTOMER = {
     "phone": "+442083661177",
 }
 
+TEST_CUSTOMERS = [
+    {
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "phone": "+442083661171",
+    },
+    {
+        "first_name": "Bob",
+        "last_name": "Johnson",
+        "phone": "+442083661172",
+    },
+    {
+        "first_name": "Charlie",
+        "last_name": "Williams",
+        "phone": "+442083661173",
+    },
+    {
+        "first_name": "Diana",
+        "last_name": "Brown",
+        "phone": "+442083661174",
+    },
+    {
+        "first_name": "Evan",
+        "last_name": "Jones",
+        "phone": "+442083661175",
+    },
+]
+
+
 INVALID_PHONE_NUMBER = "555444111"
 
 
@@ -25,8 +54,15 @@ def session():
 
 @pytest.fixture
 def customer(session):
-    """Fixture for test customer"""
     customer = Customer(**TEST_CUSTOMER)
     session.add(customer)
     session.commit()
     yield customer
+
+
+@pytest.fixture
+def customers(session):
+    customers = [Customer(**c) for c in TEST_CUSTOMERS]
+    session.add_all(customers)
+    session.commit()
+    yield customers
