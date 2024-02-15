@@ -29,9 +29,12 @@ class Customer(Base):
 
 
 class Request(Base):
-    created_by = Column(Integer, ForeignKey("customer.id"))
+    created_by = Column(
+        Integer,
+        ForeignKey("customer.id", ondelete="SET NULL"),
+    )
     body = Column(String(length=256), nullable=False)
-    status = Column(Enum(StateEnum))
+    status = Column(Enum(StateEnum), default=StateEnum.PENDING)
     processed_by = Column(Integer, ForeignKey("operator.id"))
     resolution_comment = Column(String(length=256))
 

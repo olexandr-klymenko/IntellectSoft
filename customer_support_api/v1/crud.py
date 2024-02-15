@@ -4,8 +4,12 @@ from fastapi import HTTPException, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from customer_support_api.models import Customer
-from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
+from customer_support_api.models import Customer, Request
+from customer_support_api.v1.schemas import (
+    CustomerCreate,
+    CustomerUpdate,
+    RequestCreate,
+)
 
 
 def create_customer(session: Session, customer_in: CustomerCreate) -> Customer:
@@ -53,3 +57,16 @@ def get_customers(session: Session, **kwargs) -> List[Type[Customer]]:
             return []
 
     return customers_query.all()
+
+
+def create_request(session: Session, request_in: RequestCreate) -> Request:
+    try:
+        request = Request(**request_in.model_dump())
+        session.add(request)
+        session.commit()
+        return request
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid request: {str(e)}!",
+        )

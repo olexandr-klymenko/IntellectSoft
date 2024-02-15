@@ -1,16 +1,21 @@
 import pytest
 from pydantic import ValidationError
-from tests.conftest import INVALID_PHONE_NUMBER, TEST_CUSTOMER
+from tests.conftest import INVALID_PHONE_NUMBER, TEST_CUSTOMER, TEST_REQUEST
 
-from customer_support_api.models import Customer
+from customer_support_api.models import Customer, Request, StateEnum
 from customer_support_api.v1.crud import (
     create_customer,
+    create_request,
     delete_customer,
     get_customer,
     get_customers,
     update_customer,
 )
-from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
+from customer_support_api.v1.schemas import (
+    CustomerCreate,
+    CustomerUpdate,
+    RequestCreate,
+)
 
 
 def test_create_customer(session):
@@ -60,6 +65,15 @@ def test_delete_customer(session, customer):
     assert db_customer is None
 
 
+def test_delete_customer_with_requests(session, customer, customer_request):
+    delete_customer(session=session, customer=customer)
+    db_customer = session.get(Customer, customer.id)
+    db_request = session.get(Request, customer_request.id)
+    assert db_customer is None
+    assert db_request.body == customer_request.body
+    assert db_request.created_by is None
+
+
 def test_get_all_customers(session, customers):
     res_customers = get_customers(session)
     assert len(res_customers) == len(session.query(Customer).all())
@@ -98,3 +112,11 @@ def test_get_customers_by_phone(session, customers):
 def test_get_customers_invalid_field(session, customers):
     res_customers = get_customers(session, email="test@example.com")
     assert res_customers == []
+
+
+def test_create_request(session, customer):
+    res_request = create_request(
+        session=session,
+        request_in=RequestCreate(created_by=customer.id, **TEST_REQUEST),
+    )
+    assert res_request.status == StateEnum.PENDING

@@ -31,3 +31,18 @@ class CustomerUpdate(CustomerCreate):
     first_name: str | None = None
     last_name: str | None = None
     phone: str | None = None
+
+
+class RequestBase(BaseModel):
+    created_by: int
+    body: str
+
+
+class RequestCreate(RequestBase):
+    pass
+
+
+class RequestGet(RequestBase):
+    status: str
+    processed_by: int
+    resolution_comment: str
