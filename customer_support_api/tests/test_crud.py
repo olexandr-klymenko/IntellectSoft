@@ -2,7 +2,7 @@ import pytest
 from pydantic import ValidationError
 from tests.conftest import INVALID_PHONE_NUMBER, TEST_CUSTOMER, TEST_REQUEST
 
-from customer_support_api.models import Customer, Request, StateEnum
+from customer_support_api.models import CustomerModel, RequestModel, StateEnum
 from customer_support_api.v1.crud import (
     create_customer,
     create_request,
@@ -24,7 +24,7 @@ def test_create_customer(session):
         customer_in=CustomerCreate(**TEST_CUSTOMER),
     )
 
-    db_customer = session.get(Customer, customer.id)
+    db_customer = session.get(CustomerModel, customer.id)
     assert db_customer.phone == customer.phone
 
 
@@ -39,7 +39,7 @@ def test_create_customer_fail_invalid_phone(session):
             ),
         )
 
-    assert session.query(Customer).first() is None
+    assert session.query(CustomerModel).first() is None
 
 
 def test_get_customer(session, customer):
@@ -54,21 +54,21 @@ def test_update_customer(session, customer):
         customer=customer,
         customer_update=CustomerUpdate(phone=new_phone),
     )
-    db_customer = session.get(Customer, customer.id)
+    db_customer = session.get(CustomerModel, customer.id)
     assert db_customer.phone == new_phone
     assert db_customer.first_name == customer.first_name
 
 
 def test_delete_customer(session, customer):
     delete_customer(session=session, customer=customer)
-    db_customer = session.get(Customer, customer.id)
+    db_customer = session.get(CustomerModel, customer.id)
     assert db_customer is None
 
 
 def test_delete_customer_with_requests(session, customer, customer_request):
     delete_customer(session=session, customer=customer)
-    db_customer = session.get(Customer, customer.id)
-    db_request = session.get(Request, customer_request.id)
+    db_customer = session.get(CustomerModel, customer.id)
+    db_request = session.get(RequestModel, customer_request.id)
     assert db_customer is None
     assert db_request.body == customer_request.body
     assert db_request.created_by is None
@@ -76,15 +76,15 @@ def test_delete_customer_with_requests(session, customer, customer_request):
 
 def test_get_all_customers(session, customers):
     res_customers = get_customers(session)
-    assert len(res_customers) == len(session.query(Customer).all())
+    assert len(res_customers) == len(session.query(CustomerModel).all())
 
 
 def test_get_customers_by_first_name(session, customers):
     res_customers = get_customers(session, first_name="Alice")
     assert (
         res_customers[0]
-        == session.query(Customer)
-        .filter(Customer.first_name == "Alice")
+        == session.query(CustomerModel)
+        .filter(CustomerModel.first_name == "Alice")
         .first()
     )
 
@@ -93,8 +93,8 @@ def test_get_customers_by_last_name(session, customers):
     res_customers = get_customers(session, last_name="Jones")
     assert (
         res_customers[0]
-        == session.query(Customer)
-        .filter(Customer.phone == "+442083661175")
+        == session.query(CustomerModel)
+        .filter(CustomerModel.phone == "+442083661175")
         .first()
     )
 
@@ -103,8 +103,8 @@ def test_get_customers_by_phone(session, customers):
     res_customers = get_customers(session, phone="+442083661173")
     assert (
         res_customers[0]
-        == session.query(Customer)
-        .filter(Customer.first_name == "Charlie")
+        == session.query(CustomerModel)
+        .filter(CustomerModel.first_name == "Charlie")
         .first()
     )
 

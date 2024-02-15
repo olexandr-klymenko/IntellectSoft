@@ -1,7 +1,7 @@
 import pytest
 
 from customer_support_api.db_helper import DatabaseHelper
-from customer_support_api.models import Base, Customer, Request
+from customer_support_api.models import BaseModel, CustomerModel, RequestModel
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
 
@@ -47,16 +47,16 @@ INVALID_PHONE_NUMBER = "555444111"
 
 @pytest.fixture
 def session():
-    Base.metadata.create_all(db_helper.engine)
+    BaseModel.metadata.create_all(db_helper.engine)
     session = db_helper.session_factory()
     yield session
     session.close()
-    Base.metadata.drop_all(db_helper.engine)
+    BaseModel.metadata.drop_all(db_helper.engine)
 
 
 @pytest.fixture
 def customer(session):
-    customer = Customer(**TEST_CUSTOMER)
+    customer = CustomerModel(**TEST_CUSTOMER)
     session.add(customer)
     session.commit()
     yield customer
@@ -64,7 +64,7 @@ def customer(session):
 
 @pytest.fixture
 def customers(session):
-    customers = [Customer(**c) for c in TEST_CUSTOMERS]
+    customers = [CustomerModel(**c) for c in TEST_CUSTOMERS]
     session.add_all(customers)
     session.commit()
     yield customers
@@ -72,7 +72,7 @@ def customers(session):
 
 @pytest.fixture
 def customer_request(session, customer):
-    request = Request(created_by=customer.id, **TEST_REQUEST)
+    request = RequestModel(created_by=customer.id, **TEST_REQUEST)
     session.add(request)
     session.commit()
     yield request

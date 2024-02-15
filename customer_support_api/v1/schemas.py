@@ -11,7 +11,7 @@ def phone_number_validator(v: str):
             raise ValueError("Invalid phone number")
     except phonenumbers.NumberParseException as e:
         raise ValueError("Invalid phone number format") from e
-    # Optionally, return the formatted phone number
+
     return phonenumbers.format_number(
         phone_number_obj, phonenumbers.PhoneNumberFormat.E164
     )

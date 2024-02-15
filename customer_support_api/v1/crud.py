@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from customer_support_api.models import Customer, Request
+from customer_support_api.models import CustomerModel, RequestModel
 from customer_support_api.v1.schemas import (
     CustomerCreate,
     CustomerUpdate,
@@ -12,9 +12,11 @@ from customer_support_api.v1.schemas import (
 )
 
 
-def create_customer(session: Session, customer_in: CustomerCreate) -> Customer:
+def create_customer(
+    session: Session, customer_in: CustomerCreate
+) -> CustomerModel:
     try:
-        customer = Customer(**customer_in.model_dump())
+        customer = CustomerModel(**customer_in.model_dump())
         session.add(customer)
         session.commit()
         return customer
@@ -25,32 +27,32 @@ def create_customer(session: Session, customer_in: CustomerCreate) -> Customer:
         )
 
 
-def get_customer(session: Session, customer_id: int) -> Customer | None:
-    return session.get(Customer, customer_id)
+def get_customer(session: Session, customer_id: int) -> CustomerModel | None:
+    return session.get(CustomerModel, customer_id)
 
 
 def update_customer(
     session: Session,
-    customer: Customer,
+    customer: CustomerModel,
     customer_update: CustomerUpdate,
-) -> Customer:
+) -> CustomerModel:
     for name, value in customer_update.model_dump(exclude_unset=True).items():
         setattr(customer, name, value)
     session.commit()
     return customer
 
 
-def delete_customer(session: Session, customer: Customer) -> None:
+def delete_customer(session: Session, customer: CustomerModel) -> None:
     session.delete(customer)
     session.commit()
 
 
-def get_customers(session: Session, **kwargs) -> List[Type[Customer]]:
-    customers_query = session.query(Customer)
+def get_customers(session: Session, **kwargs) -> List[Type[CustomerModel]]:
+    customers_query = session.query(CustomerModel)
     for key, value in kwargs.items():
         try:
             customers_query = customers_query.filter(
-                getattr(Customer, key) == value
+                getattr(CustomerModel, key) == value
             )
         except AttributeError:
             print(f"Unknown field '{key}'")
@@ -59,9 +61,11 @@ def get_customers(session: Session, **kwargs) -> List[Type[Customer]]:
     return customers_query.all()
 
 
-def create_request(session: Session, request_in: RequestCreate) -> Request:
+def create_request(
+    session: Session, request_in: RequestCreate
+) -> RequestModel:
     try:
-        request = Request(**request_in.model_dump())
+        request = RequestModel(**request_in.model_dump())
         session.add(request)
         session.commit()
         return request

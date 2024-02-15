@@ -10,7 +10,7 @@ class StateEnum(enum.Enum):
     REJECTED = "REJECTED"
 
 
-class Base(DeclarativeBase):
+class BaseModel(DeclarativeBase):
     __abstract__ = True
 
     @declared_attr.directive
@@ -20,15 +20,19 @@ class Base(DeclarativeBase):
     id = Column(Integer, primary_key=True)
 
 
-class Customer(Base):
+class CustomerModel(BaseModel):
+    __tablename__ = "customer"
+
     first_name = Column(String(length=50), index=True)
     last_name = Column(String(length=50), index=True)
     phone = Column(String(length=13), unique=True)
 
-    requests = relationship("Request", backref="customer", lazy=True)
+    requests = relationship("RequestModel", backref="customer", lazy=True)
 
 
-class Request(Base):
+class RequestModel(BaseModel):
+    __tablename__ = "request"
+
     created_by = Column(
         Integer,
         ForeignKey("customer.id", ondelete="SET NULL"),
@@ -39,8 +43,10 @@ class Request(Base):
     resolution_comment = Column(String(length=256))
 
 
-class Operator(Base):
+class OperatorModel(BaseModel):
+    __tablename__ = "operator"
+
     first_name = Column(String(length=50))
     last_name = Column(String(length=50))
 
-    requests = relationship("Request", backref="operator", lazy=True)
+    requests = relationship("RequestModel", backref="operator", lazy=True)
