@@ -8,8 +8,10 @@ db_helper = DatabaseHelper(url="sqlite:///:memory:")
 TEST_CUSTOMER = {
     "first_name": "John",
     "last_name": "Smith",
-    "phone": "1231231",
+    "phone": "+442083661177",
 }
+
+INVALID_PHONE_NUMBER = "555444111"
 
 
 @pytest.fixture
