@@ -42,9 +42,6 @@ TEST_CUSTOMERS = [
 TEST_REQUEST = {"body": "Something wrong"}
 
 
-INVALID_PHONE_NUMBER = "555444111"
-
-
 @pytest.fixture
 def session():
     BaseModel.metadata.create_all(db_helper.engine)

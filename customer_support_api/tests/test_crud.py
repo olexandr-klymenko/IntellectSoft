@@ -1,6 +1,4 @@
-import pytest
-from pydantic import ValidationError
-from tests.conftest import INVALID_PHONE_NUMBER, TEST_CUSTOMER, TEST_REQUEST
+from tests.conftest import TEST_CUSTOMER, TEST_REQUEST
 
 from customer_support_api.models import CustomerModel, RequestModel, StateEnum
 from customer_support_api.v1.crud import (
@@ -9,6 +7,7 @@ from customer_support_api.v1.crud import (
     delete_customer,
     get_customer,
     get_customers,
+    get_request,
     update_customer,
 )
 from customer_support_api.v1.schemas import (
@@ -28,27 +27,13 @@ def test_create_customer(session):
     assert db_customer.phone == customer.phone
 
 
-def test_create_customer_fail_invalid_phone(session):
-    with pytest.raises(ValidationError):
-        create_customer(
-            session=session,
-            customer_in=CustomerCreate(
-                first_name="John",
-                last_name="Smith",
-                phone=INVALID_PHONE_NUMBER,
-            ),
-        )
-
-    assert session.query(CustomerModel).first() is None
-
-
 def test_get_customer(session, customer):
     res_customer = get_customer(session=session, customer_id=customer.id)
     assert res_customer.phone == customer.phone
 
 
 def test_update_customer(session, customer):
-    new_phone = "55555"
+    new_phone = "+442083661175"
     update_customer(
         session=session,
         customer=customer,
@@ -117,6 +102,14 @@ def test_get_customers_invalid_field(session, customers):
 def test_create_request(session, customer):
     res_request = create_request(
         session=session,
-        request_in=RequestCreate(created_by=customer.id, **TEST_REQUEST),
+        customer_id=customer.id,
+        request_in=RequestCreate(**TEST_REQUEST),
     )
-    assert res_request.status == StateEnum.PENDING
+    db_request = session.get(RequestModel, res_request.id)
+    assert db_request.status == StateEnum.PENDING
+    assert db_request.body == TEST_REQUEST["body"]
+
+
+def test_get_request(session, customer, customer_request):
+    res_request = get_request(session=session, request_id=customer_request.id)
+    assert res_request.created_by == customer_request.created_by

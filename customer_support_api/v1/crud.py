@@ -1,7 +1,6 @@
 from typing import List, Type
 
-from fastapi import HTTPException, status
-from pydantic import ValidationError
+import loguru
 from sqlalchemy.orm import Session
 
 from customer_support_api.models import CustomerModel, RequestModel
@@ -20,11 +19,9 @@ def create_customer(
         session.add(customer)
         session.commit()
         return customer
-    except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid customer: {str(e)}!",
-        )
+    except Exception as e:
+        session.rollback()
+        raise e
 
 
 def get_customer(session: Session, customer_id: int) -> CustomerModel | None:
@@ -36,10 +33,16 @@ def update_customer(
     customer: CustomerModel,
     customer_update: CustomerUpdate,
 ) -> CustomerModel:
-    for name, value in customer_update.model_dump(exclude_unset=True).items():
-        setattr(customer, name, value)
-    session.commit()
-    return customer
+    try:
+        for name, value in customer_update.model_dump(
+            exclude_unset=True
+        ).items():
+            setattr(customer, name, value)
+        session.commit()
+        return customer
+    except Exception as e:
+        session.rollback()
+        raise e
 
 
 def delete_customer(session: Session, customer: CustomerModel) -> None:
@@ -55,22 +58,26 @@ def get_customers(session: Session, **kwargs) -> List[Type[CustomerModel]]:
                 getattr(CustomerModel, key) == value
             )
         except AttributeError:
-            print(f"Unknown field '{key}'")
+            loguru.logger.warning(f"Unknown field '{key}'")
             return []
 
     return customers_query.all()
 
 
 def create_request(
-    session: Session, request_in: RequestCreate
+    session: Session, customer_id: int, request_in: RequestCreate
 ) -> RequestModel:
     try:
-        request = RequestModel(**request_in.model_dump())
+        request = RequestModel(
+            created_by=customer_id, **request_in.model_dump()
+        )
         session.add(request)
         session.commit()
         return request
-    except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid request: {str(e)}!",
-        )
+    except Exception as e:
+        session.rollback()
+        raise e
+
+
+def get_request(session: Session, request_id: int) -> RequestModel | None:
+    return session.get(RequestModel, request_id)

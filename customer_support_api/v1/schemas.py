@@ -1,7 +1,9 @@
 import phonenumbers
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
+
+from customer_support_api.models import StateEnum
 
 
 def phone_number_validator(v: str):
@@ -30,19 +32,28 @@ class CustomerCreate(CustomerBase):
 class CustomerUpdate(CustomerCreate):
     first_name: str | None = None
     last_name: str | None = None
-    phone: str | None = None
+    phone: Annotated[
+        str, BeforeValidator(phone_number_validator)
+    ] | None = None
 
 
 class RequestBase(BaseModel):
-    created_by: int
     body: str
 
 
 class RequestCreate(RequestBase):
-    pass
+    model_config = ConfigDict(strict=True)
 
 
 class RequestGet(RequestBase):
+    created_by: int
     status: str
     processed_by: int
     resolution_comment: str
+
+
+class RequestUpdate(BaseModel):
+    body: str | None
+    status: StateEnum | None
+    processed_by: int | None
+    resolution_comment: str | None
