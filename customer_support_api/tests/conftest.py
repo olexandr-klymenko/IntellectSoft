@@ -1,7 +1,12 @@
 import pytest
 
 from customer_support_api.db_helper import DatabaseHelper
-from customer_support_api.models import BaseModel, CustomerModel, RequestModel
+from customer_support_api.models import (
+    BaseModel,
+    CustomerModel,
+    OperatorModel,
+    RequestModel,
+)
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
 
@@ -41,6 +46,11 @@ TEST_CUSTOMERS = [
 
 TEST_REQUEST = {"body": "Something wrong"}
 
+TEST_OPERATOR = {
+    "first_name": "Peter",
+    "last_name": "Falk",
+}
+
 
 @pytest.fixture
 def session():
@@ -73,3 +83,11 @@ def customer_request(session, customer):
     session.add(request)
     session.commit()
     yield request
+
+
+@pytest.fixture
+def operator(session):
+    operator = OperatorModel(**TEST_OPERATOR)
+    session.add(operator)
+    session.commit()
+    yield operator

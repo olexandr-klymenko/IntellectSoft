@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 
-from customer_support_api.models import StateEnum
+from customer_support_api.models import RequestStateEnum
 
 
 def phone_number_validator(v: str):
@@ -54,6 +54,6 @@ class RequestGet(RequestBase):
 
 class RequestUpdate(BaseModel):
     body: str | None
-    status: StateEnum | None
+    status: RequestStateEnum | None
     processed_by: int | None
     resolution_comment: str | None

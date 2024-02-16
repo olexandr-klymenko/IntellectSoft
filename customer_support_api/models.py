@@ -4,8 +4,9 @@ from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import DeclarativeBase, declared_attr, relationship
 
 
-class StateEnum(enum.Enum):
+class RequestStateEnum(enum.Enum):
     PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     REJECTED = "REJECTED"
 
@@ -38,7 +39,7 @@ class RequestModel(BaseModel):
         ForeignKey("customer.id", ondelete="SET NULL"),
     )
     body = Column(String(length=256), nullable=False)
-    status = Column(Enum(StateEnum), default=StateEnum.PENDING)
+    status = Column(Enum(RequestStateEnum), default=RequestStateEnum.PENDING)
     processed_by = Column(Integer, ForeignKey("operator.id"))
     resolution_comment = Column(String(length=256))
 

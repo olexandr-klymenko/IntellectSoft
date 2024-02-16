@@ -3,12 +3,8 @@ from typing import List, Type
 import loguru
 from sqlalchemy.orm import Session
 
-from customer_support_api.models import CustomerModel, RequestModel
-from customer_support_api.v1.schemas import (
-    CustomerCreate,
-    CustomerUpdate,
-    RequestCreate,
-)
+from customer_support_api.models import CustomerModel
+from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
 
 
 def create_customer(
@@ -62,22 +58,3 @@ def get_customers(session: Session, **kwargs) -> List[Type[CustomerModel]]:
             return []
 
     return customers_query.all()
-
-
-def create_request(
-    session: Session, customer_id: int, request_in: RequestCreate
-) -> RequestModel:
-    try:
-        request = RequestModel(
-            created_by=customer_id, **request_in.model_dump()
-        )
-        session.add(request)
-        session.commit()
-        return request
-    except Exception as e:
-        session.rollback()
-        raise e
-
-
-def get_request(session: Session, request_id: int) -> RequestModel | None:
-    return session.get(RequestModel, request_id)

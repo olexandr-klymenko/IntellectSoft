@@ -1,20 +1,13 @@
-from tests.conftest import TEST_CUSTOMER, TEST_REQUEST
-
-from customer_support_api.models import CustomerModel, RequestModel, StateEnum
+from customer_support_api.models import CustomerModel, RequestModel
+from customer_support_api.tests.conftest import TEST_CUSTOMER
 from customer_support_api.v1.crud import (
     create_customer,
-    create_request,
     delete_customer,
     get_customer,
     get_customers,
-    get_request,
     update_customer,
 )
-from customer_support_api.v1.schemas import (
-    CustomerCreate,
-    CustomerUpdate,
-    RequestCreate,
-)
+from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
 
 
 def test_create_customer(session):
@@ -97,19 +90,3 @@ def test_get_customers_by_phone(session, customers):
 def test_get_customers_invalid_field(session, customers):
     res_customers = get_customers(session, email="test@example.com")
     assert res_customers == []
-
-
-def test_create_request(session, customer):
-    res_request = create_request(
-        session=session,
-        customer_id=customer.id,
-        request_in=RequestCreate(**TEST_REQUEST),
-    )
-    db_request = session.get(RequestModel, res_request.id)
-    assert db_request.status == StateEnum.PENDING
-    assert db_request.body == TEST_REQUEST["body"]
-
-
-def test_get_request(session, customer, customer_request):
-    res_request = get_request(session=session, request_id=customer_request.id)
-    assert res_request.created_by == customer_request.created_by
