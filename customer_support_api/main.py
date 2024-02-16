@@ -33,3 +33,12 @@ def add(a: int, b: int):
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
+
+
+# TODO: Finish crud function
+# TODO: Complete API
+# TODO: Implement pagination
+# TODO: Implement HATEOAS
+# TODO: Add docstrings and comments
+# TODO: Complete alembic migrations
+# TODO: Update README
