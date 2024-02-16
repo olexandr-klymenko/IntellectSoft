@@ -1,3 +1,5 @@
+from typing import List, Type
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -86,3 +88,16 @@ def archive_request(session: Session, request: RequestModel):
         detail=f"Archiving request"
         f" with status '{request.status}' is not allowed!",
     )
+
+
+def get_requests_by_customer(
+    session: Session,
+    customer: CustomerModel,
+    show_archived=False,
+) -> List[Type[CustomerModel]]:
+    query = session.query(RequestModel).filter(
+        RequestModel.created_by == customer.id
+    )
+    if not show_archived:
+        query = query.filter(RequestModel.status != RequestStateEnum.ARCHIVED)
+    return query.all()

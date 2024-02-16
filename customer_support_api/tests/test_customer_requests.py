@@ -9,6 +9,7 @@ from customer_support_api.v1.crud import (
     complete_request,
     create_request,
     get_request,
+    get_requests_by_customer,
     reject_request,
 )
 from customer_support_api.v1.schemas import RequestCreate
@@ -107,3 +108,31 @@ def test_archive_request_fail(session, customer_request):
         )
     db_request = session.get(RequestModel, customer_request.id)
     assert db_request.status == RequestStateEnum.PENDING
+
+
+def test_requests_by_customer(session, customer, customer_requests):
+    new_request = RequestModel(
+        created_by=customer.id,
+        body="Test description",
+        status=RequestStateEnum.ARCHIVED,
+    )
+    session.add(new_request)
+    session.commit()
+    requests = get_requests_by_customer(session=session, customer=customer)
+    assert len(requests) == len(customer_requests)
+
+
+def test_requests_by_customer_show_archived(
+    session, customer, customer_requests
+):
+    new_request = RequestModel(
+        created_by=customer.id,
+        body="Test description",
+        status=RequestStateEnum.ARCHIVED,
+    )
+    session.add(new_request)
+    session.commit()
+    requests = get_requests_by_customer(
+        session=session, customer=customer, show_archived=True
+    )
+    assert len(requests) == len(session.query(RequestModel).all())

@@ -11,6 +11,7 @@ __all__ = (
     "reject_request",
     "update_request_body",
     "archive_request",
+    "get_requests_by_customer",
 )
 
 from .customer_requests import (
@@ -19,6 +20,7 @@ from .customer_requests import (
     complete_request,
     create_request,
     get_request,
+    get_requests_by_customer,
     reject_request,
     update_request_body,
 )

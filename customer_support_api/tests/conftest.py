@@ -6,6 +6,7 @@ from customer_support_api.models import (
     CustomerModel,
     OperatorModel,
     RequestModel,
+    RequestStateEnum,
 )
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
@@ -46,6 +47,13 @@ TEST_CUSTOMERS = [
 
 TEST_REQUEST = {"body": "Something wrong"}
 
+TEST_REQUESTS = [
+    {"body": "Something wrong"},
+    {"body": "Something wrong", "status": RequestStateEnum.IN_PROGRESS},
+    {"body": "Something wrong", "status": RequestStateEnum.COMPLETED},
+    {"body": "Something wrong", "status": RequestStateEnum.REJECTED},
+]
+
 TEST_OPERATOR = {
     "first_name": "Peter",
     "last_name": "Falk",
@@ -83,6 +91,16 @@ def customer_request(session, customer):
     session.add(request)
     session.commit()
     yield request
+
+
+@pytest.fixture
+def customer_requests(session, customer):
+    requests = [
+        RequestModel(created_by=customer.id, **r) for r in TEST_REQUESTS
+    ]
+    session.add_all(requests)
+    session.commit()
+    yield requests
 
 
 @pytest.fixture
