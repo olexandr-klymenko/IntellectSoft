@@ -1,4 +1,4 @@
-from customer_support_api.models import CustomerModel, RequestModel
+from customer_support_api.models import CustomerModel
 from customer_support_api.tests.conftest import TEST_CUSTOMER
 from customer_support_api.v1.crud import (
     create_customer,
@@ -40,20 +40,24 @@ def test_update_customer(session, customer):
 def test_delete_customer(session, customer):
     delete_customer(session=session, customer=customer)
     db_customer = session.get(CustomerModel, customer.id)
-    assert db_customer is None
-
-
-def test_delete_customer_with_requests(session, customer, customer_request):
-    delete_customer(session=session, customer=customer)
-    db_customer = session.get(CustomerModel, customer.id)
-    db_request = session.get(RequestModel, customer_request.id)
-    assert db_customer is None
-    assert db_request.body == customer_request.body
-    assert db_request.created_by is None
+    assert db_customer.is_deleted
 
 
 def test_get_all_customers(session, customers):
+    customer = CustomerModel(**TEST_CUSTOMER)
+    customer.is_deleted = True
+    session.add(customer)
+    session.commit()
     res_customers = get_customers(session)
+    assert len(res_customers) == len(customers)
+
+
+def test_get_all_customers_show_deleted(session, customers):
+    customer = CustomerModel(**TEST_CUSTOMER)
+    customer.is_deleted = True
+    session.add(customer)
+    session.commit()
+    res_customers = get_customers(session, show_deleted=True)
     assert len(res_customers) == len(session.query(CustomerModel).all())
 
 

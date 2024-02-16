@@ -1,3 +1,7 @@
+import pytest
+from fastapi import HTTPException
+from v1.crud import archive_request
+
 from customer_support_api.models import RequestModel, RequestStateEnum
 from customer_support_api.tests.conftest import TEST_REQUEST
 from customer_support_api.v1.crud import (
@@ -48,6 +52,17 @@ def test_complete_request(session, customer, customer_request, operator):
     assert db_request.status == RequestStateEnum.COMPLETED
 
 
+def test_complete_request_fail(session, customer, customer_request, operator):
+    with pytest.raises(HTTPException):
+        complete_request(
+            session=session,
+            request=customer_request,
+            comment="The issue has been resolved",
+        )
+    db_request = session.get(RequestModel, customer_request.id)
+    assert db_request.status == RequestStateEnum.PENDING
+
+
 def test_reject_request(session, customer, customer_request, operator):
     customer_request.status = RequestStateEnum.IN_PROGRESS
     session.add(customer_request)
@@ -59,3 +74,36 @@ def test_reject_request(session, customer, customer_request, operator):
     )
     db_request = session.get(RequestModel, customer_request.id)
     assert db_request.status == RequestStateEnum.REJECTED
+
+
+def test_reject_request_fail(session, customer, customer_request, operator):
+    with pytest.raises(HTTPException):
+        reject_request(
+            session=session,
+            request=customer_request,
+            comment="The issue won't be resolved",
+        )
+    db_request = session.get(RequestModel, customer_request.id)
+    assert db_request.status == RequestStateEnum.PENDING
+
+
+def test_archive_request(session, customer_request):
+    customer_request.status = RequestStateEnum.COMPLETED
+    session.add(customer_request)
+    session.commit()
+    archive_request(
+        session=session,
+        request=customer_request,
+    )
+    db_request = session.get(RequestModel, customer_request.id)
+    assert db_request.status == RequestStateEnum.ARCHIVED
+
+
+def test_archive_request_fail(session, customer_request):
+    with pytest.raises(HTTPException):
+        archive_request(
+            session=session,
+            request=customer_request,
+        )
+    db_request = session.get(RequestModel, customer_request.id)
+    assert db_request.status == RequestStateEnum.PENDING

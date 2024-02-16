@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import DeclarativeBase, declared_attr, relationship
 
 
@@ -9,6 +9,7 @@ class RequestStateEnum(enum.Enum):
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     REJECTED = "REJECTED"
+    ARCHIVED = "ARCHIVED"
 
 
 class BaseModel(DeclarativeBase):
@@ -27,6 +28,7 @@ class CustomerModel(BaseModel):
     first_name = Column(String(length=50), index=True)
     last_name = Column(String(length=50), index=True)
     phone = Column(String(length=13), unique=True)
+    is_deleted = Column(Boolean, default=False)
 
     requests = relationship("RequestModel", backref="customer", lazy=True)
 

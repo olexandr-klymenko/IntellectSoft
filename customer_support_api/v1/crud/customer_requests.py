@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from customer_support_api.models import (
@@ -48,6 +49,13 @@ def complete_request(session: Session, request: RequestModel, comment: str):
         request.status = RequestStateEnum.COMPLETED
         request.resolution_comment = comment
         session.commit()
+        return
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail=f"Completing request "
+        f"with status '{request.status}' is not allowed!",
+    )
 
 
 def reject_request(session: Session, request: RequestModel, comment: str):
@@ -55,3 +63,26 @@ def reject_request(session: Session, request: RequestModel, comment: str):
         request.status = RequestStateEnum.REJECTED
         request.resolution_comment = comment
         session.commit()
+        return
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail=f"Rejecting request"
+        f" with status '{request.status}' is not allowed!",
+    )
+
+
+def archive_request(session: Session, request: RequestModel):
+    if request.status in (
+        RequestStateEnum.COMPLETED,
+        RequestStateEnum.REJECTED,
+    ):
+        request.status = RequestStateEnum.ARCHIVED
+        session.commit()
+        return
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail=f"Archiving request"
+        f" with status '{request.status}' is not allowed!",
+    )

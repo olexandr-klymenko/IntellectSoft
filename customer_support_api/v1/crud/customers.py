@@ -1,6 +1,7 @@
 from typing import List, Type
 
 import loguru
+from sqlalchemy import not_
 from sqlalchemy.orm import Session
 
 from customer_support_api.models import CustomerModel
@@ -42,11 +43,16 @@ def update_customer(
 
 
 def delete_customer(session: Session, customer: CustomerModel) -> None:
-    session.delete(customer)
-    session.commit()
+    update_customer(
+        session=session,
+        customer=customer,
+        customer_update=CustomerUpdate(is_deleted=True),
+    )
 
 
-def get_customers(session: Session, **kwargs) -> List[Type[CustomerModel]]:
+def get_customers(
+    session: Session, show_deleted=False, **kwargs
+) -> List[Type[CustomerModel]]:
     customers_query = session.query(CustomerModel)
     for key, value in kwargs.items():
         try:
@@ -56,5 +62,9 @@ def get_customers(session: Session, **kwargs) -> List[Type[CustomerModel]]:
         except AttributeError:
             loguru.logger.warning(f"Unknown field '{key}'")
             return []
+    if not show_deleted:
+        customers_query = customers_query.filter(
+            not_(CustomerModel.is_deleted)
+        )
 
     return customers_query.all()

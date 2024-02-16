@@ -10,9 +10,11 @@ __all__ = (
     "complete_request",
     "reject_request",
     "update_request_body",
+    "archive_request",
 )
 
 from .customer_requests import (
+    archive_request,
     assign_request,
     complete_request,
     create_request,

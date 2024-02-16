@@ -29,12 +29,17 @@ class CustomerCreate(CustomerBase):
     phone: Annotated[str, BeforeValidator(phone_number_validator)]
 
 
+class CustomerGet(CustomerBase):
+    is_deleted: bool
+
+
 class CustomerUpdate(CustomerCreate):
     first_name: str | None = None
     last_name: str | None = None
     phone: Annotated[
         str, BeforeValidator(phone_number_validator)
     ] | None = None
+    is_deleted: bool | None = None
 
 
 class RequestBase(BaseModel):
