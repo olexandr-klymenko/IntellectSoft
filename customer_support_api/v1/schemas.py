@@ -62,3 +62,12 @@ class RequestUpdate(BaseModel):
     status: RequestStateEnum | None
     processed_by: int | None
     resolution_comment: str | None
+
+
+class OperatorBase(BaseModel):
+    first_name: str
+    last_name: str
+
+
+class OperatorCreate(OperatorBase):
+    pass

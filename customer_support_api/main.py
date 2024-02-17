@@ -35,7 +35,6 @@ if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
 
 
-# TODO: Finish crud function
 # TODO: Complete API
 # TODO: Implement pagination
 # TODO: Implement HATEOAS

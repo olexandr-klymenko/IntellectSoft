@@ -11,14 +11,10 @@ from customer_support_api.v1.schemas import CustomerCreate, CustomerUpdate
 def create_customer(
     session: Session, customer_in: CustomerCreate
 ) -> CustomerModel:
-    try:
-        customer = CustomerModel(**customer_in.model_dump())
-        session.add(customer)
-        session.commit()
-        return customer
-    except Exception as e:
-        session.rollback()
-        raise e
+    customer = CustomerModel(**customer_in.model_dump())
+    session.add(customer)
+    session.commit()
+    return customer
 
 
 def get_customer(session: Session, customer_id: int) -> CustomerModel | None:
@@ -30,16 +26,10 @@ def update_customer(
     customer: CustomerModel,
     customer_update: CustomerUpdate,
 ) -> CustomerModel:
-    try:
-        for name, value in customer_update.model_dump(
-            exclude_unset=True
-        ).items():
-            setattr(customer, name, value)
-        session.commit()
-        return customer
-    except Exception as e:
-        session.rollback()
-        raise e
+    for name, value in customer_update.model_dump(exclude_unset=True).items():
+        setattr(customer, name, value)
+    session.commit()
+    return customer
 
 
 def delete_customer(session: Session, customer: CustomerModel) -> None:

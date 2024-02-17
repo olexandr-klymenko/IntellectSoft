@@ -14,13 +14,14 @@ class DatabaseHelper:
             url=url,
             echo=echo,
         )
+        # Enforce foreign keys checking
+        # which in sqlite is turned off by default
         if "sqlite" in url:
             event.listen(self.engine, "connect", _fk_pragma_on_connect)
 
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
-            autocommit=False,
             expire_on_commit=False,
         )
 

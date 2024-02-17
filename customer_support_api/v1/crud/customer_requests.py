@@ -1,5 +1,6 @@
 from typing import List, Type
 
+import loguru
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -15,16 +16,10 @@ from customer_support_api.v1.schemas import RequestCreate
 def create_request(
     session: Session, customer: CustomerModel, request_in: RequestCreate
 ) -> RequestModel:
-    try:
-        request = RequestModel(
-            created_by=customer.id, **request_in.model_dump()
-        )
-        session.add(request)
-        session.commit()
-        return request
-    except Exception as e:
-        session.rollback()
-        raise e
+    request = RequestModel(created_by=customer.id, **request_in.model_dump())
+    session.add(request)
+    session.commit()
+    return request
 
 
 def get_request(session: Session, request_id: int) -> RequestModel | None:
@@ -90,14 +85,31 @@ def archive_request(session: Session, request: RequestModel):
     )
 
 
+def get_all_requests(
+    session: Session, show_archived=False, **kwargs
+) -> List[Type[RequestModel]]:
+    requests_query = session.query(RequestModel)
+    for key, value in kwargs.items():
+        try:
+            requests_query = requests_query.filter(
+                getattr(RequestModel, key) == value
+            )
+        except AttributeError:
+            loguru.logger.warning(f"Unknown field '{key}'")
+            return []
+    if not show_archived:
+        requests_query = requests_query.filter(
+            RequestModel.status != RequestStateEnum.ARCHIVED
+        )
+
+    return requests_query.all()
+
+
 def get_requests_by_customer(
     session: Session,
     customer: CustomerModel,
     show_archived=False,
-) -> List[Type[CustomerModel]]:
-    query = session.query(RequestModel).filter(
-        RequestModel.created_by == customer.id
+) -> List[Type[RequestModel]]:
+    return get_all_requests(
+        session=session, show_archived=show_archived, created_by=customer.id
     )
-    if not show_archived:
-        query = query.filter(RequestModel.status != RequestStateEnum.ARCHIVED)
-    return query.all()
