@@ -1,30 +1,31 @@
 from typing import List, Type
 
 import loguru
-import models
 from enums import RequestStatus
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from customer_support_api.models import Customer, Operator, Request
-from customer_support_api.v1 import schemas
+from customer_support_api import models
+from customer_support_api import schemas
 
 
 def create_request(
-    session: Session, customer: Customer, request_in: schemas.RequestCreate
-) -> Request:
-    request = Request(created_by=customer.id, **request_in.model_dump())
+    session: Session,
+    customer: models.Customer,
+    request_in: schemas.RequestCreate,
+) -> models.Request:
+    request = models.Request(created_by=customer.id, **request_in.model_dump())
     session.add(request)
     session.commit()
     return request
 
 
-def get_request(session: Session, request_id: int) -> Request | None:
-    return session.get(Request, request_id)
+def get_request(session: Session, request_id: int) -> models.Request | None:
+    return session.get(models.Request, request_id)
 
 
 def update_request_body(
-    session: Session, request: Request, body: str
+    session: Session, request: models.Request, body: str
 ) -> models.Request:
     request.body = body
     session.add(request)
@@ -33,7 +34,7 @@ def update_request_body(
 
 
 def assign_request(
-    session: Session, request: Request, operator: Operator
+    session: Session, request: models.Request, operator: models.Operator
 ) -> models.Request:
     request.processed_by = operator.id
     request.status = RequestStatus.IN_PROGRESS
@@ -44,7 +45,7 @@ def assign_request(
 
 def complete_reject_request(
     session: Session,
-    request: Request,
+    request: models.Request,
     update_request_in: schemas.RequestCompleteReject,
     comment: str,
 ):
@@ -61,7 +62,7 @@ def complete_reject_request(
     )
 
 
-def archive_request(session: Session, request: Request):
+def archive_request(session: Session, request: models.Request):
     if request.status in (
         RequestStatus.COMPLETED,
         RequestStatus.REJECTED,
@@ -79,19 +80,19 @@ def archive_request(session: Session, request: Request):
 
 def get_all_requests(
     session: Session, show_archived=False, **kwargs
-) -> List[Type[Request]]:
-    requests_query = session.query(Request)
+) -> List[Type[models.Request]]:
+    requests_query = session.query(models.Request)
     for key, value in kwargs.items():
         try:
             requests_query = requests_query.filter(
-                getattr(Request, key) == value
+                getattr(models.Request, key) == value
             )
         except AttributeError:
             loguru.logger.warning(f"Unknown field '{key}'")
             return []
     if not show_archived:
         requests_query = requests_query.filter(
-            Request.status != RequestStatus.ARCHIVED
+            models.Request.status != RequestStatus.ARCHIVED
         )
 
     return requests_query.all()
@@ -99,9 +100,9 @@ def get_all_requests(
 
 def get_requests_by_customer(
     session: Session,
-    customer: Customer,
+    customer: models.Customer,
     show_archived=False,
-) -> List[Type[Request]]:
+) -> List[Type[models.Request]]:
     return get_all_requests(
         session=session, show_archived=show_archived, created_by=customer.id
     )

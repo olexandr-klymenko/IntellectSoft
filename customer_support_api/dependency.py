@@ -2,9 +2,10 @@ import enums
 from fastapi import Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from customer_support_api import models
 from customer_support_api.db_helper import db_helper
-from customer_support_api.v1 import crud, schemas
+from customer_support_api import crud
+from customer_support_api import models
+from customer_support_api import schemas
 
 scoped_session = db_helper.scoped_session
 

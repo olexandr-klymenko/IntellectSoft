@@ -6,11 +6,9 @@ from fastapi import FastAPI
 
 from customer_support_api.db_helper import db_helper
 from customer_support_api.models import BaseModel
-from customer_support_api.v1.routes.customer_requests import (
-    router as requests_router,
-)
-from customer_support_api.v1.routes.customers import router as customers_router
-from customer_support_api.v1.routes.operator import router as operator_router
+from customer_support_api.routes.customers import router as customers_router
+from customer_support_api.routes.operator import router as operator_router
+from customer_support_api.routes.requests import router as requests_router
 
 
 @asynccontextmanager

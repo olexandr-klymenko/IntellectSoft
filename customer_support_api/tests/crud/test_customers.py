@@ -1,12 +1,18 @@
+from customer_support_api import crud
 from customer_support_api import models
-from customer_support_api.tests.conftest import TEST_CUSTOMER
-from customer_support_api.v1 import crud, schemas
+from customer_support_api import schemas
 
 
 def test_create_customer(session):
     customer = crud.create_customer(
         session=session,
-        customer_in=schemas.CustomerCreate(**TEST_CUSTOMER),
+        customer_in=schemas.CustomerCreate(
+            **{
+                "first_name": "John",
+                "last_name": "Smith",
+                "phone": "+442083661177",
+            }
+        ),
     )
 
     db_customer = session.get(models.Customer, customer.id)
@@ -37,7 +43,13 @@ def test_delete_customer(session, customer):
 
 
 def test_get_all_customers(session, customers):
-    customer = models.Customer(**TEST_CUSTOMER)
+    customer = models.Customer(
+        **{
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone": "+442083661177",
+        }
+    )
     customer.is_deleted = True
     session.add(customer)
     session.commit()
@@ -46,7 +58,13 @@ def test_get_all_customers(session, customers):
 
 
 def test_get_all_customers_show_deleted(session, customers):
-    customer = models.Customer(**TEST_CUSTOMER)
+    customer = models.Customer(
+        **{
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone": "+442083661177",
+        }
+    )
     customer.is_deleted = True
     session.add(customer)
     session.commit()

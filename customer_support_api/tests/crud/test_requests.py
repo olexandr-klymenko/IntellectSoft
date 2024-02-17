@@ -1,20 +1,21 @@
 import pytest
 from fastapi import HTTPException
 
-from customer_support_api import enums, models
-from customer_support_api.tests.conftest import TEST_REQUEST
-from customer_support_api.v1 import crud, schemas
+from customer_support_api import crud
+from customer_support_api import enums
+from customer_support_api import models
+from customer_support_api import schemas
 
 
 def test_create_request(session, customer):
     res_request = crud.create_request(
         session=session,
         customer=customer,
-        request_in=schemas.RequestCreate(**TEST_REQUEST),
+        request_in=schemas.RequestCreate(**{"body": "Something wrong"}),
     )
     db_request = session.get(models.Request, res_request.id)
     assert db_request.status == enums.RequestStatus.PENDING
-    assert db_request.body == TEST_REQUEST["body"]
+    assert db_request.body == "Something wrong"
 
 
 def test_get_request(session, customer, customer_request):

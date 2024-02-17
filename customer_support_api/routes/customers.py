@@ -3,8 +3,10 @@ from typing import List
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
-from customer_support_api import dependency, models
-from customer_support_api.v1 import crud, schemas
+from customer_support_api import crud
+from customer_support_api import dependency
+from customer_support_api import models
+from customer_support_api import schemas
 
 router = APIRouter(tags=["Customers"], prefix="/customers")
 

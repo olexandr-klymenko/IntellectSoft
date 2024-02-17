@@ -1,6 +1,7 @@
 import pytest
 
-from customer_support_api import enums, models
+from customer_support_api import enums
+from customer_support_api import models
 from customer_support_api.db_helper import DatabaseHelper
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
