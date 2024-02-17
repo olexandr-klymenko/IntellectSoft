@@ -7,21 +7,23 @@ __all__ = (
     "create_request",
     "get_request",
     "assign_request",
-    "complete_request",
-    "reject_request",
+    "complete_reject_request",
     "update_request_body",
     "archive_request",
     "get_requests_by_customer",
+    "create_operator",
+    "get_operator",
+    "get_all_requests",
 )
 
 from .customer_requests import (
     archive_request,
     assign_request,
-    complete_request,
+    complete_reject_request,
     create_request,
+    get_all_requests,
     get_request,
     get_requests_by_customer,
-    reject_request,
     update_request_body,
 )
 from .customers import (
@@ -31,3 +33,4 @@ from .customers import (
     get_customers,
     update_customer,
 )
+from .operator import create_operator, get_operator

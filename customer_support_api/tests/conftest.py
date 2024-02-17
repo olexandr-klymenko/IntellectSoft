@@ -1,13 +1,7 @@
 import pytest
 
+from customer_support_api import enums, models
 from customer_support_api.db_helper import DatabaseHelper
-from customer_support_api.models import (
-    BaseModel,
-    CustomerModel,
-    OperatorModel,
-    RequestModel,
-    RequestStateEnum,
-)
 
 db_helper = DatabaseHelper(url="sqlite:///:memory:")
 
@@ -49,9 +43,9 @@ TEST_REQUEST = {"body": "Something wrong"}
 
 TEST_REQUESTS = [
     {"body": "Something wrong"},
-    {"body": "Something wrong", "status": RequestStateEnum.IN_PROGRESS},
-    {"body": "Something wrong", "status": RequestStateEnum.COMPLETED},
-    {"body": "Something wrong", "status": RequestStateEnum.REJECTED},
+    {"body": "Something wrong", "status": enums.RequestStatus.IN_PROGRESS},
+    {"body": "Something wrong", "status": enums.RequestStatus.COMPLETED},
+    {"body": "Something wrong", "status": enums.RequestStatus.REJECTED},
 ]
 
 TEST_OPERATOR = {
@@ -62,16 +56,16 @@ TEST_OPERATOR = {
 
 @pytest.fixture
 def session():
-    BaseModel.metadata.create_all(db_helper.engine)
+    models.BaseModel.metadata.create_all(db_helper.engine)
     session = db_helper.session_factory()
     yield session
     session.close()
-    BaseModel.metadata.drop_all(db_helper.engine)
+    models.BaseModel.metadata.drop_all(db_helper.engine)
 
 
 @pytest.fixture
 def customer(session):
-    customer = CustomerModel(**TEST_CUSTOMER)
+    customer = models.Customer(**TEST_CUSTOMER)
     session.add(customer)
     session.commit()
     yield customer
@@ -79,7 +73,7 @@ def customer(session):
 
 @pytest.fixture
 def customers(session):
-    customers = [CustomerModel(**c) for c in TEST_CUSTOMERS]
+    customers = [models.Customer(**c) for c in TEST_CUSTOMERS]
     session.add_all(customers)
     session.commit()
     yield customers
@@ -87,7 +81,7 @@ def customers(session):
 
 @pytest.fixture
 def customer_request(session, customer):
-    request = RequestModel(created_by=customer.id, **TEST_REQUEST)
+    request = models.Request(created_by=customer.id, **TEST_REQUEST)
     session.add(request)
     session.commit()
     yield request
@@ -96,7 +90,7 @@ def customer_request(session, customer):
 @pytest.fixture
 def customer_requests(session, customer):
     requests = [
-        RequestModel(created_by=customer.id, **r) for r in TEST_REQUESTS
+        models.Request(created_by=customer.id, **r) for r in TEST_REQUESTS
     ]
     session.add_all(requests)
     session.commit()
@@ -105,7 +99,7 @@ def customer_requests(session, customer):
 
 @pytest.fixture
 def operator(session):
-    operator = OperatorModel(**TEST_OPERATOR)
+    operator = models.Operator(**TEST_OPERATOR)
     session.add(operator)
     session.commit()
     yield operator
