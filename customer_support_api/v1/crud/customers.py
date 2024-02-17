@@ -33,11 +33,9 @@ def update_customer(
 
 
 def delete_customer(session: Session, customer: CustomerModel) -> None:
-    update_customer(
-        session=session,
-        customer=customer,
-        customer_update=CustomerUpdate(is_deleted=True),
-    )
+    customer.is_deleted = True
+    session.add(customer)
+    session.commit()
 
 
 def get_customers(

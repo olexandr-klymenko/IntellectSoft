@@ -1,5 +1,5 @@
 import phonenumbers
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 
@@ -22,15 +22,15 @@ def phone_number_validator(v: str):
 class CustomerBase(BaseModel):
     first_name: str
     last_name: str
-    phone: str
+    phone: str = Field(..., example="+442083661177")
 
 
 class CustomerCreate(CustomerBase):
     phone: Annotated[str, BeforeValidator(phone_number_validator)]
 
 
-class CustomerGet(CustomerBase):
-    is_deleted: bool
+class Customer(CustomerBase):
+    id: int
 
 
 class CustomerUpdate(CustomerCreate):
@@ -39,7 +39,6 @@ class CustomerUpdate(CustomerCreate):
     phone: Annotated[
         str, BeforeValidator(phone_number_validator)
     ] | None = None
-    is_deleted: bool | None = None
 
 
 class RequestBase(BaseModel):

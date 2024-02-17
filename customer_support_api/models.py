@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import DeclarativeBase, declared_attr, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 class RequestStateEnum(enum.Enum):
@@ -14,10 +14,6 @@ class RequestStateEnum(enum.Enum):
 
 class BaseModel(DeclarativeBase):
     __abstract__ = True
-
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return f"{cls.__name__.lower()}"
 
     id = Column(Integer, primary_key=True)
 

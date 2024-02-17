@@ -25,6 +25,11 @@ class DatabaseHelper:
             expire_on_commit=False,
         )
 
+    def scoped_session(self):
+        session = self.session_factory()
+        yield session
+        session.close()
+
 
 db_helper = DatabaseHelper(
     url=settings.db.url,
