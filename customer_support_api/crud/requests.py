@@ -1,10 +1,10 @@
 from typing import List, Type
 
 import loguru
-from enums import RequestStatus
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from customer_support_api import enums
 from customer_support_api import models
 from customer_support_api import schemas
 
@@ -38,7 +38,7 @@ def assign_request(
 ) -> models.Request:
     """Assign request to an operator"""
     request.processed_by = operator.id
-    request.status = RequestStatus.IN_PROGRESS
+    request.status = enums.RequestStatus.IN_PROGRESS
     session.add(request)
     session.commit()
     return request
@@ -55,7 +55,7 @@ def complete_reject_request(
     Completing and rejecting request require that current state is IN_PROGRESS
     and mandatory comment field.
     """
-    if request.status == RequestStatus.IN_PROGRESS:
+    if request.status == enums.RequestStatus.IN_PROGRESS:
         request.status = update_request_in.status
         request.resolution_comment = update_request_in.comment
         session.commit()
@@ -74,10 +74,10 @@ def archive_request(session: Session, request: models.Request):
     Actual deletion from database is beyond the scope of the API.
     """
     if request.status in (
-        RequestStatus.COMPLETED,
-        RequestStatus.REJECTED,
+        enums.RequestStatus.COMPLETED,
+        enums.RequestStatus.REJECTED,
     ):
-        request.status = RequestStatus.ARCHIVED
+        request.status = enums.RequestStatus.ARCHIVED
         session.commit()
         return
 
@@ -102,7 +102,7 @@ def get_all_requests(
             return []
     if not show_archived:
         requests_query = requests_query.filter(
-            models.Request.status != RequestStatus.ARCHIVED
+            models.Request.status != enums.RequestStatus.ARCHIVED
         )
 
     return requests_query.all()

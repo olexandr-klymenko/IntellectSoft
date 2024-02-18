@@ -4,7 +4,7 @@ import loguru
 from sqlalchemy import not_
 from sqlalchemy.orm import Session
 
-import enums
+from customer_support_api import enums
 from customer_support_api import models
 from customer_support_api import schemas
 

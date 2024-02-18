@@ -1,7 +1,8 @@
-from core.config import settings
 from sqlalchemy import event
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from customer_support_api.config import settings
 
 
 def _fk_pragma_on_connect(dbapi_con, con_record):  # noqa

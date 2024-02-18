@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from core.config import settings
 from fastapi import FastAPI
 
+from customer_support_api.config import settings
 from customer_support_api.db_helper import db_helper
 from customer_support_api.models import BaseModel
 from customer_support_api.routes.customers import router as customers_router
@@ -29,7 +29,6 @@ if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
 
 
-# TODO: Complete API
 # TODO: Implement pagination
 # TODO: Implement HATEOAS
 # TODO: Update README
