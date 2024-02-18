@@ -14,6 +14,7 @@ __all__ = (
     "create_operator",
     "get_operator",
     "get_all_requests",
+    "get_all_operators",
 )
 
 from .customers import (
@@ -23,7 +24,7 @@ from .customers import (
     get_customers,
     update_customer,
 )
-from .operator import create_operator, get_operator
+from .operator import create_operator, get_operator, get_all_operators
 from .requests import (
     archive_request,
     assign_request,

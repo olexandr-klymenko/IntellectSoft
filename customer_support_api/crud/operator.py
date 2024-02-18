@@ -1,3 +1,5 @@
+from typing import List, Type
+
 from sqlalchemy.orm import Session
 
 from customer_support_api import models
@@ -15,3 +17,8 @@ def create_operator(
 
 def get_operator(session: Session, operator_id: int) -> models.Operator | None:
     return session.get(models.Operator, operator_id)
+
+
+def get_all_operators(session: Session) -> List[Type[models.Operator]]:
+    requests_query = session.query(models.Operator)
+    return requests_query.all()

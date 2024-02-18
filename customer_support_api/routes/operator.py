@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
@@ -33,4 +35,13 @@ def assign_request(
         session=session,
         request=request,
         operator=operator,
+    )
+
+
+@router.get("/", response_model=List[schemas.Operator])
+def get_operators(
+    session: Session = Depends(dependency.scoped_session),
+):
+    return crud.get_all_operators(
+        session=session,
     )
