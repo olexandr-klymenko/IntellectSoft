@@ -46,7 +46,7 @@ class RequestBase(BaseModel):
 
 
 class RequestCreate(RequestBase):
-    model_config = ConfigDict(strict=True)
+    pass
 
 
 class Request(RequestBase):
@@ -57,14 +57,18 @@ class Request(RequestBase):
     resolution_comment: str | None
 
 
-class RequestUpdate(BaseModel):
+class RequestQueryArgs(BaseModel):
     status: enums.RequestStatus | None
     processed_by: int | None
 
 
+class RequestUpdateBody(RequestBase):
+    pass
+
+
 class RequestCompleteReject(BaseModel):
     status: enums.CompletedRejected
-    comment: str
+    resolution_comment: str
 
 
 class OperatorBase(BaseModel):

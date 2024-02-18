@@ -65,7 +65,7 @@ def customers_query_params(
 def requests_query_params(
     request_status: enums.RequestStatus = Query(default=None),
     processed_by: int = Query(default=None),
-) -> schemas.RequestUpdate:
-    return schemas.RequestUpdate(
+) -> schemas.RequestQueryArgs:
+    return schemas.RequestQueryArgs(
         status=request_status, processed_by=processed_by
     )

@@ -20,7 +20,7 @@ def get_request(
 
 @router.get("/", response_model=List[schemas.Request])
 def get_requests(
-    requests_args: schemas.RequestUpdate = Depends(
+    requests_args: schemas.RequestQueryArgs = Depends(
         dependency.requests_query_params
     ),
     show_archived: bool = Query(default=False),
@@ -43,6 +43,24 @@ def complete_reject_request(
         session=session,
         request=request,
         update_request_in=update_request_in,
+    )
+
+
+@router.put("/{request_id}", response_model=schemas.Request)
+def update_request_body(
+    update_body_in: schemas.RequestUpdateBody,
+    request: models.Request = Depends(dependency.request_by_id),
+    session: Session = Depends(dependency.scoped_session),
+):
+    """
+    Update request body.
+    Not an ideal HTTP method,
+    but PATCH is already taken by complete_reject_request.
+    """
+    return crud.update_request_body(
+        session=session,
+        request=request,
+        body=update_body_in.body,
     )
 
 

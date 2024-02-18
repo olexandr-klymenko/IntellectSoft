@@ -27,8 +27,3 @@ app.include_router(router=operator_router, prefix=settings.api_v1_prefix)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
-
-
-# TODO: Implement pagination
-# TODO: Implement HATEOAS
-# TODO: Update README

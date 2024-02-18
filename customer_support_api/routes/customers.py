@@ -90,18 +90,3 @@ def get_requests_by_customer(
     session: Session = Depends(dependency.scoped_session),
 ):
     return crud.get_requests_by_customer(session=session, customer=customer)
-
-
-@router.patch(
-    "/{customer_id}/requests/{request_id}", response_model=schemas.Request
-)
-def update_request_body(
-    body: str,
-    request: models.Request = Depends(dependency.request_by_id),
-    session: Session = Depends(dependency.scoped_session),
-):
-    return crud.update_request_body(
-        session=session,
-        request=request,
-        body=body,
-    )

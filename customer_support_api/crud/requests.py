@@ -53,11 +53,11 @@ def complete_reject_request(
     Complete or reject request operation.
     These were unified due to similarity of condition and schema.
     Completing and rejecting request require that current state is IN_PROGRESS
-    and mandatory comment field.
+    and mandatory resolution_comment field.
     """
     if request.status == enums.RequestStatus.IN_PROGRESS:
         request.status = update_request_in.status
-        request.resolution_comment = update_request_in.comment
+        request.resolution_comment = update_request_in.resolution_comment
         session.commit()
         return request
 
