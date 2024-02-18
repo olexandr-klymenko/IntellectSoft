@@ -67,7 +67,7 @@ def get_customers(
 
 
 @router.post(
-    "/{customer_id}/",
+    "/{customer_id}/requests",
     response_model=schemas.Request,
     status_code=status.HTTP_201_CREATED,
 )
@@ -82,7 +82,7 @@ def create_request_for_customer(
 
 
 @router.get(
-    "/{customer_id}/",
+    "/{customer_id}/requests",
     response_model=List[schemas.Request],
 )
 def get_requests_by_customer(
@@ -90,3 +90,18 @@ def get_requests_by_customer(
     session: Session = Depends(dependency.scoped_session),
 ):
     return crud.get_requests_by_customer(session=session, customer=customer)
+
+
+@router.patch(
+    "/{customer_id}/requests/{request_id}", response_model=schemas.Request
+)
+def update_request_body(
+    body: str,
+    request: models.Request = Depends(dependency.request_by_id),
+    session: Session = Depends(dependency.scoped_session),
+):
+    return crud.update_request_body(
+        session=session,
+        request=request,
+        body=body,
+    )

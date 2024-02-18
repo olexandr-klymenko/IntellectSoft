@@ -48,7 +48,6 @@ def complete_reject_request(
     session: Session,
     request: models.Request,
     update_request_in: schemas.RequestCompleteReject,
-    comment: str,
 ):
     """
     Complete or reject request operation.
@@ -58,7 +57,7 @@ def complete_reject_request(
     """
     if request.status == RequestStatus.IN_PROGRESS:
         request.status = update_request_in.status
-        request.resolution_comment = comment
+        request.resolution_comment = update_request_in.comment
         session.commit()
         return request
 

@@ -18,19 +18,6 @@ def get_request(
     return request
 
 
-@router.patch("/{request_id}", response_model=schemas.Request)
-def update_request_body(
-    body: str,
-    request: models.Request = Depends(dependency.request_by_id),
-    session: Session = Depends(dependency.scoped_session),
-):
-    return crud.update_request_body(
-        session=session,
-        request=request,
-        body=body,
-    )
-
-
 @router.get("/", response_model=List[schemas.Request])
 def get_requests(
     requests_args: schemas.RequestUpdate = Depends(
@@ -49,7 +36,6 @@ def get_requests(
 @router.patch("/{request_id}", response_model=schemas.Request)
 def complete_reject_request(
     update_request_in: schemas.RequestCompleteReject,
-    comment: str,
     request: models.Request = Depends(dependency.request_by_id),
     session: Session = Depends(dependency.scoped_session),
 ):
@@ -57,7 +43,6 @@ def complete_reject_request(
         session=session,
         request=request,
         update_request_in=update_request_in,
-        comment=comment,
     )
 
 

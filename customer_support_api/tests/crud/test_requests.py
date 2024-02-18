@@ -41,8 +41,9 @@ def test_complete_request(session, customer, customer_request, operator):
     crud.complete_reject_request(
         session=session,
         request=customer_request,
-        update_request_in=schemas.RequestCompleteReject(status="COMPLETED"),
-        comment="The issue has been resolved",
+        update_request_in=schemas.RequestCompleteReject(
+            status="COMPLETED", comment="The issue has been resolved"
+        ),
     )
     db_request = session.get(models.Request, customer_request.id)
     assert db_request.status == enums.RequestStatus.COMPLETED
@@ -54,9 +55,9 @@ def test_complete_request_fail(session, customer, customer_request, operator):
             session=session,
             request=customer_request,
             update_request_in=schemas.RequestCompleteReject(
-                status="COMPLETED"
+                status="COMPLETED",
+                comment="The issue has been resolved",
             ),
-            comment="The issue has been resolved",
         )
     db_request = session.get(models.Request, customer_request.id)
     assert db_request.status == enums.RequestStatus.PENDING
@@ -69,8 +70,10 @@ def test_reject_request(session, customer, customer_request, operator):
     crud.complete_reject_request(
         session=session,
         request=customer_request,
-        update_request_in=schemas.RequestCompleteReject(status="REJECTED"),
-        comment="The issue won't be resolved",
+        update_request_in=schemas.RequestCompleteReject(
+            status="REJECTED",
+            comment="The issue won't be resolved",
+        ),
     )
     db_request = session.get(models.Request, customer_request.id)
     assert db_request.status == enums.RequestStatus.REJECTED
@@ -81,8 +84,10 @@ def test_reject_request_fail(session, customer, customer_request, operator):
         crud.complete_reject_request(
             session=session,
             request=customer_request,
-            update_request_in=schemas.RequestCompleteReject(status="REJECTED"),
-            comment="The issue won't be resolved",
+            update_request_in=schemas.RequestCompleteReject(
+                status="REJECTED",
+                comment="The issue won't be resolved",
+            ),
         )
     db_request = session.get(models.Request, customer_request.id)
     assert db_request.status == enums.RequestStatus.PENDING

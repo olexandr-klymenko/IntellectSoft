@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic.functional_validators import BeforeValidator
 from typing_extensions import Annotated
 
-from customer_support_api.enums import CompletedRejected, RequestStatus
+from customer_support_api import enums
 
 
 def phone_number_validator(v: str):
@@ -58,12 +58,13 @@ class Request(RequestBase):
 
 
 class RequestUpdate(BaseModel):
-    status: RequestStatus | None
+    status: enums.RequestStatus | None
     processed_by: int | None
 
 
 class RequestCompleteReject(BaseModel):
-    status: CompletedRejected
+    status: enums.CompletedRejected
+    comment: str
 
 
 class OperatorBase(BaseModel):
