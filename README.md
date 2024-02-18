@@ -1,3 +1,5 @@
+# The task descriptions
+
 Develop a RESTful API service using your preferred web framework
 (such as FastAPI, Django, or Flask).  
 This service will offer CRUD operations for Client entities
@@ -24,3 +26,26 @@ The basic structure of the entities should include the following fields:
 - Id
 - First Name
 - Last Name
+
+# Pre-requisites
+`Poetry` is recommended to help manage the dependencies and virtualenv.
+```sh
+$ pip install poetry
+```
+
+# Usage
+
+## Installing with Poetry
+```sh
+# Install packages with poetry
+$ poetry install
+```
+
+## Running
+```sh
+$ uvicorn customer_support_api.main:app
+```
+
+## Playing around with REST API
+You can make requests to API in swagger UI.
+open in browser http://127.0.0.1:8000/docs
