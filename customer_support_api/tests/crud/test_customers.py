@@ -1,4 +1,5 @@
 from customer_support_api import crud
+from customer_support_api import enums
 from customer_support_api import models
 from customer_support_api import schemas
 
@@ -36,10 +37,12 @@ def test_update_customer(session, customer):
     assert db_customer.first_name == customer.first_name
 
 
-def test_delete_customer(session, customer):
+def test_delete_customer(session, customer, customer_request):
     crud.delete_customer(session=session, customer=customer)
     db_customer = session.get(models.Customer, customer.id)
+    db_requests = db_customer.requests
     assert db_customer.is_deleted
+    assert db_requests[0].status == enums.RequestStatus.ARCHIVED
 
 
 def test_get_all_customers(session, customers):

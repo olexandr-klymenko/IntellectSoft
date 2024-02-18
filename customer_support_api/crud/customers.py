@@ -4,6 +4,7 @@ import loguru
 from sqlalchemy import not_
 from sqlalchemy.orm import Session
 
+import enums
 from customer_support_api import models
 from customer_support_api import schemas
 
@@ -35,6 +36,10 @@ def update_customer(
 def delete_customer(session: Session, customer: models.Customer) -> None:
     customer.is_deleted = True
     session.add(customer)
+    if customer.requests:
+        for request in customer.requests:
+            request.status = enums.RequestStatus.ARCHIVED
+        session.add_all(customer.requests)
     session.commit()
 
 
