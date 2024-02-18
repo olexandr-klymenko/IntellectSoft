@@ -32,5 +32,4 @@ if __name__ == "__main__":
 # TODO: Complete API
 # TODO: Implement pagination
 # TODO: Implement HATEOAS
-# TODO: Add docstrings and comments
 # TODO: Update README

@@ -36,6 +36,7 @@ def update_request_body(
 def assign_request(
     session: Session, request: models.Request, operator: models.Operator
 ) -> models.Request:
+    """Assign request to an operator"""
     request.processed_by = operator.id
     request.status = RequestStatus.IN_PROGRESS
     session.add(request)
@@ -49,6 +50,12 @@ def complete_reject_request(
     update_request_in: schemas.RequestCompleteReject,
     comment: str,
 ):
+    """
+    Complete or reject request operation.
+    These were unified due to similarity of condition and schema.
+    Completing and rejecting request require that current state is IN_PROGRESS
+    and mandatory comment field.
+    """
     if request.status == RequestStatus.IN_PROGRESS:
         request.status = update_request_in.status
         request.resolution_comment = comment
@@ -63,6 +70,10 @@ def complete_reject_request(
 
 
 def archive_request(session: Session, request: models.Request):
+    """
+    Archive request.
+    Actual deletion from database is beyond the scope of the API.
+    """
     if request.status in (
         RequestStatus.COMPLETED,
         RequestStatus.REJECTED,
