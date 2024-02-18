@@ -34,6 +34,12 @@ def update_customer(
 
 
 def delete_customer(session: Session, customer: models.Customer) -> None:
+    """
+    As far as being a risky operation
+    real customer deletion from the database is beyond of scope of API.
+    Instead, we mark user as deleted.
+    Also, we archive all corresponding requests.
+    """
     customer.is_deleted = True
     session.add(customer)
     if customer.requests:
@@ -46,6 +52,9 @@ def delete_customer(session: Session, customer: models.Customer) -> None:
 def get_customers(
     session: Session, show_deleted=False, **kwargs
 ) -> List[Type[models.Customer]]:
+    """
+    By using kwargs we enable multiple filtering
+    """
     customers_query = session.query(models.Customer)
     for key, value in kwargs.items():
         try:
