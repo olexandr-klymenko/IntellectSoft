@@ -49,3 +49,13 @@ $ uvicorn customer_support_api.main:app
 ## Playing around with REST API
 You can make requests to API in swagger UI.
 open in browser http://127.0.0.1:8000/docs
+
+
+## TODOS:
+There several feature to be done for production ready API:
+* `Alembic` migrations
+* `.env` configuration for different environments
+* `Dockerfile` for deployment into docker-compose/Kubernetes
+* `API test coverage`. For the moment CRUD test coverage is implemented
+* `HATEOAS` and `Pagination` for endpoints that return multiple entries
+* `Versioning` of the API
