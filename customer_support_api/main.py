@@ -13,6 +13,8 @@ from customer_support_api.routes.requests import router as requests_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # As far it is just test task we omit using alembic migrations
+    # which is mandatory for real projects
     BaseModel.metadata.create_all(db_helper.engine)
     yield
 
@@ -31,5 +33,4 @@ if __name__ == "__main__":
 # TODO: Implement pagination
 # TODO: Implement HATEOAS
 # TODO: Add docstrings and comments
-# TODO: Complete alembic migrations
 # TODO: Update README
