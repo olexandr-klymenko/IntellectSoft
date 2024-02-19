@@ -178,5 +178,5 @@ There several feature to be done for production ready API:
 * `.env` configuration for different environments
 * `Dockerfile` for deployment into docker-compose/Kubernetes
 * `API test coverage`. For the moment CRUD test coverage is implemented
-* `HATEOAS` and `Pagination` for endpoints that return multiple entries
+* `HATEOAS` for endpoints that return multiple entries
 * `Versioning` of the API

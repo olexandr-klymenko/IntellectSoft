@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 
 from customer_support_api.config import settings
 from customer_support_api.db_helper import db_helper
@@ -20,6 +21,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+add_pagination(app)
 app.include_router(router=customers_router, prefix=settings.api_v1_prefix)
 app.include_router(router=requests_router, prefix=settings.api_v1_prefix)
 app.include_router(router=operator_router, prefix=settings.api_v1_prefix)

@@ -1,6 +1,6 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, Query, status
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session
 
 from customer_support_api import crud
@@ -18,18 +18,20 @@ def get_request(
     return request
 
 
-@router.get("/", response_model=List[schemas.Request])
-def get_requests(
+@router.get("/", response_model=Page[schemas.Request])
+def get_all_requests(
     requests_args: schemas.RequestQueryArgs = Depends(
         dependency.requests_query_params
     ),
     show_archived: bool = Query(default=False),
     session: Session = Depends(dependency.scoped_session),
 ):
-    return crud.get_all_requests(
-        session=session,
-        show_archived=show_archived,
-        **requests_args.model_dump(exclude_none=True)
+    return paginate(
+        crud.get_all_requests(
+            session=session,
+            show_archived=show_archived,
+            **requests_args.model_dump(exclude_none=True)
+        )
     )
 
 

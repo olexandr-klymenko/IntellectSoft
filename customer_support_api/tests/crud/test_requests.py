@@ -124,10 +124,8 @@ def test_requests_by_customer(session, customer, customer_requests):
     )
     session.add(new_request)
     session.commit()
-    requests = crud.get_requests_by_customer(
-        session=session, customer=customer
-    )
-    assert len(requests) == len(customer_requests)
+    requests = crud.get_all_requests(session=session, customer=customer)
+    assert len(requests.all()) == len(customer_requests)
 
 
 def test_requests_by_customer_show_archived(
@@ -140,7 +138,7 @@ def test_requests_by_customer_show_archived(
     )
     session.add(new_request)
     session.commit()
-    requests = crud.get_requests_by_customer(
+    requests = crud.get_all_requests(
         session=session, customer=customer, show_archived=True
     )
-    assert len(requests) == len(session.query(models.Request).all())
+    assert len(requests.all()) == len(session.query(models.Request).all())

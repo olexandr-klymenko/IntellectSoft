@@ -10,7 +10,6 @@ __all__ = (
     "complete_reject_request",
     "update_request_body",
     "archive_request",
-    "get_requests_by_customer",
     "create_operator",
     "get_operator",
     "get_all_requests",
@@ -32,6 +31,5 @@ from .requests import (
     create_request,
     get_all_requests,
     get_request,
-    get_requests_by_customer,
     update_request_body,
 )

@@ -1,8 +1,6 @@
-from typing import List, Type
-
 import loguru
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from customer_support_api import enums
 from customer_support_api import models
@@ -90,7 +88,7 @@ def archive_request(session: Session, request: models.Request):
 
 def get_all_requests(
     session: Session, show_archived=False, **kwargs
-) -> List[Type[models.Request]]:
+) -> Query[models.Request]:
     requests_query = session.query(models.Request)
     for key, value in kwargs.items():
         try:
@@ -105,14 +103,4 @@ def get_all_requests(
             models.Request.status != enums.RequestStatus.ARCHIVED
         )
 
-    return requests_query.all()
-
-
-def get_requests_by_customer(
-    session: Session,
-    customer: models.Customer,
-    show_archived=False,
-) -> List[Type[models.Request]]:
-    return get_all_requests(
-        session=session, show_archived=show_archived, created_by=customer.id
-    )
+    return requests_query

@@ -1,6 +1,8 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, Query, status
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm import Session
 
 from customer_support_api import crud
@@ -83,10 +85,15 @@ def create_request_for_customer(
 
 @router.get(
     "/{customer_id}/requests",
-    response_model=List[schemas.Request],
+    response_model=Page[schemas.Request],
 )
 def get_requests_by_customer(
     customer: models.Customer = Depends(dependency.customer_by_id),
+    show_archived: bool = Query(default=False),
     session: Session = Depends(dependency.scoped_session),
 ):
-    return crud.get_requests_by_customer(session=session, customer=customer)
+    return paginate(
+        crud.get_all_requests(
+            session=session, customer=customer, show_archived=show_archived
+        )
+    )
